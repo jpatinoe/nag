@@ -38,16 +38,16 @@ def parse_task(user_message):
     return json.loads(raw.strip())
 
 
-# Test it with a few realistic messages
-test_messages = [
-    "buy milk",
-    "dentist appointment sometime next week",
-    "remember I need to call mum",
-    "meeting with supervisors",
-    "pay rent on the 1st"
-]
+if __name__ == "__main__":
+    test_messages = [
+        "buy milk",
+        "dentist appointment sometime next week",
+        "remember I need to call mum",
+        "meeting with supervisors",
+        "pay rent on the 1st"
+    ]
 
-for msg in test_messages:
-    print(f"\nInput: '{msg}'")
-    result = parse_task(msg)
-    print(f"Output: {result}")
+    for msg in test_messages:
+        print(f"\nInput: '{msg}'")
+        result = parse_task(msg)
+        print(f"Output: {result}")
