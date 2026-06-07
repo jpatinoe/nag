@@ -74,6 +74,12 @@ def update_last_nudged(task_id):
                 (datetime.now().isoformat(), task_id))
     conn.commit()
     conn.close()
+
+def update_task_name(task_id, new_name):
+    conn = get_connection()
+    conn.execute("UPDATE tasks SET task = ? WHERE id = ?", (new_name, task_id))
+    conn.commit()
+    conn.close()
     
 if __name__ == "__main__":
     setup_database()
