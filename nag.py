@@ -19,7 +19,7 @@ def main():
             else:
                 print("\nYour tasks:")
                 for t in tasks:
-                    id, task, urgency, needs_date, due_date, follow_up = t
+                    id, task, urgency, needs_date, due_date, follow_up, last_nudged = t
                     date_str = f" | due: {due_date}" if due_date else ""
                     followup_str = f"\n   ❓ {follow_up}" if follow_up else ""
                     print(f"  [{id}] ({urgency}) {task}{date_str}{followup_str}")
