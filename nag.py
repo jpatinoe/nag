@@ -1,5 +1,5 @@
 from parser import parse_task
-from database import setup_database, add_task, list_tasks, mark_done
+from database import setup_database, add_task, list_tasks, mark_done, set_due_date
 
 def main():
     setup_database()
@@ -39,9 +39,18 @@ def main():
             if not result.get("task"):
                 print("Hmm, I didn't catch a task there. Try again.\n")
             else:
-                add_task(result)
+                task_id = add_task(result)
+                
                 if result["follow_up_question"]:
                     print(f"✅ Got it. ❓ {result['follow_up_question']}\n")
+                
+                if result["needs_date"]:
+                    due = input("📅 When? (e.g. 'tomorrow', 'June 10', 'next Monday'): ").strip()
+                    if due:
+                        set_due_date(task_id, due)
+                        print(f"✅ Saved: {result['task']} — due {due} ({result['urgency']})\n")
+                    else:
+                        print(f"✅ Saved: {result['task']} ({result['urgency']})\n")
                 else:
                     print(f"✅ Saved: {result['task']} ({result['urgency']})\n")
 

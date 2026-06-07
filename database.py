@@ -27,9 +27,8 @@ def setup_database():
     print("Database ready.")
 
 def add_task(parsed):
-    # Insert a new task using the parsed output from Claude
     conn = get_connection()
-    conn.execute("""
+    cursor = conn.execute("""
         INSERT INTO tasks (task, urgency, needs_date, follow_up_question, done, created_at)
         VALUES (?, ?, ?, ?, 0, ?)
     """, (
@@ -40,7 +39,9 @@ def add_task(parsed):
         datetime.now().isoformat()
     ))
     conn.commit()
+    task_id = cursor.lastrowid
     conn.close()
+    return task_id
 
 def list_tasks():
     # Return all tasks that aren't done yet
@@ -62,5 +63,11 @@ def mark_done(task_id):
     conn.commit()
     conn.close()
 
+def set_due_date(task_id, due_date):
+    conn = get_connection()
+    conn.execute("UPDATE tasks SET due_date = ? WHERE id = ?", (due_date, task_id))
+    conn.commit()
+    conn.close()
+    
 if __name__ == "__main__":
     setup_database()
