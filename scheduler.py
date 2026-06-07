@@ -1,48 +1,68 @@
+import os
+from dotenv import load_dotenv
 from apscheduler.schedulers.blocking import BlockingScheduler
-from database import setup_database, list_tasks, mark_done
+from database import setup_database, list_tasks
 from datetime import datetime, timedelta
+from twilio.rest import Client
+
+load_dotenv()
 
 scheduler = BlockingScheduler()
+
+def send_whatsapp(message):
+    client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+    client.messages.create(
+        from_=os.getenv("TWILIO_WHATSAPP_FROM"),
+        to=os.getenv("TWILIO_WHATSAPP_TO"),
+        body=message
+    )
 
 def check_tasks():
     print(f"\n🔍 Checking tasks... ({datetime.now().strftime('%H:%M:%S')})")
     tasks = list_tasks()
-    
+
     if not tasks:
         print("No pending tasks.")
         return
-    
+
     now = datetime.now()
-    
+
     for task in tasks:
         id, name, urgency, needs_date, due_date, follow_up = task
-        
-        # Tasks with no due date — just surface them as a gentle reminder
+
+        # Tasks with no due date
         if not due_date:
             if urgency == "high":
-                print(f"🔴 Hey, don't forget: {name}")
-            elif urgency == "medium":
-                print(f"🟡 Reminder: {name}")
+                msg = f"🔴 Hey, don't forget: {name}"
+                print(msg)
+                send_whatsapp(msg)
             continue
-        
+
         # Try to parse the due date
         try:
             due = datetime.fromisoformat(due_date)
         except:
-            # If it's a plain string like "tomorrow" or "next Monday", just show it
             print(f"📅 {name} — due: {due_date} ({urgency})")
             continue
-        
+
         time_left = due - now
-        
+
         if time_left < timedelta(0):
-            print(f"⚠️  OVERDUE: {name}")
+            msg = f"⚠️ Nag: OVERDUE — {name}"
+            print(msg)
+            send_whatsapp(msg)
         elif time_left < timedelta(hours=2):
-            print(f"🔴 Due very soon: {name} ({due_date})")
+            msg = f"🔴 Nag: Due very soon — {name}"
+            print(msg)
+            send_whatsapp(msg)
         elif time_left < timedelta(hours=24):
-            print(f"🟡 Due today: {name} ({due_date})")
+            msg = f"🟡 Nag: Due today — {name}"
+            print(msg)
+            send_whatsapp(msg)
         elif time_left < timedelta(days=3):
-            print(f"🟢 Coming up: {name} ({due_date})")
+            msg = f"🟢 Nag: Coming up — {name}"
+            print(msg)
+            send_whatsapp(msg)
 
 @scheduler.scheduled_job('interval', minutes=1)
 def scheduled_check():
