@@ -5,10 +5,19 @@ from parser import parse_task, parse_due_date, merge_followup
 from database import setup_database, add_task, list_tasks, mark_done, set_due_date, update_task_name, save_pending_state, get_pending_state, clear_pending_state
 from twilio.rest import Client
 from datetime import datetime
+import threading
+from scheduler import check_tasks, morning_digest
+from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 app = FastAPI()
 setup_database()
+# Start the scheduler in the background
+bg_scheduler = BackgroundScheduler()
+bg_scheduler.add_job(check_tasks, 'interval', minutes=30)
+bg_scheduler.add_job(morning_digest, 'cron', hour=9, minute=0)
+bg_scheduler.start()
+print("Scheduler started in background.")
 
 def send_whatsapp(message):
     client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))

@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from database import setup_database, list_tasks, update_last_nudged
 from datetime import datetime, timedelta
 from twilio.rest import Client
