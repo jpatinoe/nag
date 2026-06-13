@@ -80,6 +80,52 @@ def update_task_name(task_id, new_name):
     conn.execute("UPDATE tasks SET task = ? WHERE id = ?", (new_name, task_id))
     conn.commit()
     conn.close()
+
+def save_pending_state(phone, state, task_id):
+    """Save that a user is in the middle of a follow-up conversation."""
+    conn = get_connection()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS pending_state (
+            phone TEXT PRIMARY KEY,
+            state TEXT,
+            task_id INTEGER,
+            updated_at TEXT
+        )
+    """)
+    conn.execute("""
+        INSERT INTO pending_state (phone, state, task_id, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(phone) DO UPDATE SET
+            state=excluded.state,
+            task_id=excluded.task_id,
+            updated_at=excluded.updated_at
+    """, (phone, state, task_id, datetime.now().isoformat()))
+    conn.commit()
+    conn.close()
+
+def get_pending_state(phone):
+    """Get the current conversation state for a user."""
+    conn = get_connection()
+    try:
+        cursor = conn.execute("""
+            SELECT state, task_id FROM pending_state WHERE phone = ?
+        """, (phone,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+    except:
+        conn.close()
+        return None
+
+def clear_pending_state(phone):
+    """Clear the conversation state after it's been handled."""
+    conn = get_connection()
+    try:
+        conn.execute("DELETE FROM pending_state WHERE phone = ?", (phone,))
+        conn.commit()
+    except:
+        pass
+    conn.close()
     
 if __name__ == "__main__":
     setup_database()
