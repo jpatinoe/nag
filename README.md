@@ -1,6 +1,6 @@
 # Nag 🔔
 
-A personal AI agent that remembers what you need to do — and actually reminds you.
+A personal AI agent that remembers what you need to do ... and actually reminds you.
 
 ## The problem
 
@@ -19,12 +19,12 @@ Most task apps require you to open them, maintain them, and remember to check th
 
 ## Features
 
-- 📲 **WhatsApp input and output** — no app to open, no dashboard to check
-- 🧠 **AI-powered parsing** — understands messy natural language
-- 📅 **Smart date parsing** — "next Monday", "in 3 days", "June 10" all work
-- ⏰ **Deadline-aware nudges** — nudge frequency increases as due date approaches
-- ☀️ **Morning digest** — daily 9am summary of what's due today
-- ✅ **Manage via WhatsApp** — reply "list", "done 1", or "done all"
+- **WhatsApp input and output** — no app to open, no dashboard to check
+- **AI-powered parsing** — understands messy natural language
+- **Smart date parsing** — "next Monday", "in 3 days", "June 10" all work
+- **Deadline-aware nudges** — nudge frequency increases as due date approaches
+- **Morning digest** — daily 9am summary of what's due today
+- **Manage via WhatsApp** — reply "list", "done 1", or "done all"
 
 ## Commands
 
@@ -86,3 +86,7 @@ Fully functional and deployed. Potential next steps:
 - Recurring tasks
 - Natural language to mark tasks done ("I did the dentist")
 - Web dashboard to view and manage tasks
+
+## Author
+
+Juan Patiño-Echeverría — [github.com/jpatinoe](https://github.com/jpatinoe)
